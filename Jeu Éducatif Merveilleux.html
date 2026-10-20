@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Aventure des Petits Curieux - Jeu Éducatif 6 ans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', cursive, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .bounce-hover:hover {
+            transform: scale(1.04) translateY(-4px);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .pop-in {
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-3d {
+            box-shadow: 0 6px 0 #0002;
+            transition: all 0.1s ease;
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0002;
+        }
+
+        .star-shine {
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15) rotate(5deg); }
+        }
+    </style>
+</head>
+<body class="p-2 md:p-6 flex flex-col items-center justify-center min-h-screen relative overflow-x-hidden">
+
+    <!-- Header / Stats Bar -->
+    <header class="w-full max-w-4xl bg-white/80 backdrop-blur-md rounded-3xl p-4 mb-4 card-shadow flex flex-wrap justify-between items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+            <button id="homeBtn" onclick="showCategoryMenu()" class="hidden bg-yellow-400 hover:bg-yellow-300 text-yellow-900 p-2 sm:p-3 rounded-2xl font-bold flex items-center gap-2 btn-3d text-sm sm:text-base">
+                <i class="fas fa-home text-lg sm:text-xl"></i>
+                <span class="hidden sm:inline">Accueil</span>
+            </button>
+            <button onclick="openProfileModal()" class="bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-2 rounded-2xl font-bold flex items-center gap-2 btn-3d text-xs sm:text-sm">
+                <i class="fas fa-user-circle text-lg"></i>
+                <span id="currentProfileName">Joueur</span>
+            </button>
+            <div class="flex items-center gap-1.5 bg-purple-100 px-3 py-1.5 rounded-2xl">
+                <span class="text-xl">⭐</span>
+                <span id="starCount" class="text-xl font-bold text-purple-700">0</span>
+            </div>
+        </div>
+
+        <h1 class="text-base sm:text-2xl font-bold text-indigo-700 text-center flex-1 hidden md:block">
+            ✨ L'Aventure des Petits Curieux ✨
+        </h1>
+
+        <div class="flex items-center gap-2">
+            <button onclick="openRewardsModal()" class="bg-pink-500 hover:bg-pink-400 text-white px-3 py-2 rounded-2xl font-bold flex items-center gap-2 btn-3d text-xs sm:text-sm">
+                <i class="fas fa-trophy text-lg text-yellow-300"></i>
+                <span>Mes Trésors</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main id="appContainer" class="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl p-4 md:p-8 card-shadow min-h-[500px] flex flex-col items-center justify-center relative">
+
+        <!-- CATEGORY SELECTION MENU -->
+        <div id="categoryMenu" class="w-full text-center space-y-6 pop-in">
+            <div class="space-y-2">
+                <h2 class="text-2xl md:text-3xl font-bold text-indigo-800">Choisis une matière ! 🚀</h2>
+                <p class="text-gray-600 text-base md:text-lg">Gagne des étoiles et débloque de super cadeaux !</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <!-- Maths Card -->
+                <button onclick="selectCategory('maths')" class="bg-gradient-to-b from-blue-400 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white rounded-3xl p-6 flex flex-col items-center justify-between gap-4 card-shadow bounce-hover cursor-pointer border-4 border-white">
+                    <div class="text-6xl bg-white/20 p-4 rounded-full">🔢</div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">Mathématiques</h3>
+                        <p class="text-blue-100 text-sm">Comptage, additions, suites & comparaisons</p>
+                    </div>
+                    <span class="bg-white/30 text-white px-4 py-1 rounded-full text-sm font-semibold">10 Niveaux</span>
+                </button>
+
+                <!-- English Card -->
+                <button onclick="selectCategory('english')" class="bg-gradient-to-b from-emerald-400 to-teal-600 hover:from-emerald-500 hover:to-teal-700 text-white rounded-3xl p-6 flex flex-col items-center justify-between gap-4 card-shadow bounce-hover cursor-pointer border-4 border-white">
+                    <div class="text-6xl bg-white/20 p-4 rounded-full">🔤</div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">Anglais 🔊</h3>
+                        <p class="text-emerald-100 text-sm">Vocabulaire, son & prononciation</p>
+                    </div>
+                    <span class="bg-white/30 text-white px-4 py-1 rounded-full text-sm font-semibold">10 Niveaux</span>
+                </button>
+
+                <!-- Logic/Shapes Card -->
+                <button onclick="selectCategory('logic')" class="bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-3xl p-6 flex flex-col items-center justify-between gap-4 card-shadow bounce-hover cursor-pointer border-4 border-white">
+                    <div class="text-6xl bg-white/20 p-4 rounded-full">🧩</div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-1">Logique & Formes</h3>
+                        <p class="text-amber-100 text-sm">Formes, ombres & devinettes</p>
+                    </div>
+                    <span class="bg-white/30 text-white px-4 py-1 rounded-full text-sm font-semibold">10 Niveaux</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- LEVEL SELECTOR -->
+        <div id="levelMenu" class="hidden w-full text-center space-y-6 pop-in">
+            <h2 id="levelMenuTitle" class="text-3xl font-bold text-indigo-800">Sélectionne un niveau</h2>
+            <p class="text-gray-600">Rejoins l'aventure et débloque tes cadeaux !</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-3xl mx-auto my-6" id="levelButtonsContainer">
+                <!-- Dynamic Level Buttons (1 à 10) -->
+            </div>
+        </div>
+
+        <!-- GAME AREA -->
+        <div id="gameArea" class="hidden w-full flex flex-col items-center justify-between min-h-[420px]">
+            <!-- Level Indicator & Progress -->
+            <div class="w-full flex justify-between items-center mb-4 bg-indigo-50 p-3 rounded-2xl gap-2 flex-wrap sm:flex-nowrap">
+                <div id="gameSubjectTag" class="text-indigo-700 font-bold px-3 py-1 bg-indigo-200 rounded-xl text-sm">
+                    Maths - Niveau 1
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500 font-bold text-sm hidden sm:inline">Progression :</span>
+                    <div class="w-28 sm:w-36 bg-gray-200 rounded-full h-4 overflow-hidden border">
+                        <div id="progressBar" class="bg-green-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                    <span id="progressText" class="text-sm font-bold text-indigo-800">0/5</span>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="questionCard" class="w-full bg-indigo-50/60 rounded-3xl p-6 text-center my-2 border-2 border-indigo-100 flex flex-col items-center justify-center min-h-[180px] relative">
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <h3 id="questionText" class="text-2xl md:text-3xl font-bold text-gray-800">
+                        Combien y a-t-il d'étoiles ?
+                    </h3>
+                    <button id="speakQuestionBtn" onclick="speakCurrentText()" class="hidden bg-indigo-500 hover:bg-indigo-600 text-white p-3 rounded-full btn-3d shadow" title="Écouter en anglais">
+                        <i class="fas fa-volume-up text-xl"></i>
+                    </button>
+                </div>
+                
+                <div id="questionDisplay" class="flex flex-wrap justify-center items-center gap-3 text-4xl sm:text-5xl my-2">
+                    <!-- Dynamic question items -->
+                </div>
+            </div>
+
+            <!-- Answer Options Grid -->
+            <div id="optionsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-4">
+                <!-- Dynamic options -->
+            </div>
+
+            <!-- Hint Display Box -->
+            <div id="hintBox" class="hidden mt-4 bg-amber-100 border-2 border-amber-400 text-amber-900 rounded-2xl p-3 text-center max-w-md w-full pop-in">
+                <span class="font-bold text-lg">💡 Indice : </span>
+                <span id="hintText" class="font-medium text-base"></span>
+            </div>
+        </div>
+
+        <!-- LEVEL WIN SCREEN -->
+        <div id="winScreen" class="hidden w-full text-center space-y-6 pop-in py-6">
+            <div class="text-7xl star-shine">🏆</div>
+            <h2 class="text-3xl md:text-4xl font-bold text-green-600">BRAVO ! NIVEAU RÉUSSI !</h2>
+            <p class="text-xl text-gray-700">Tu as gagné une super récompense !</p>
+
+            <div id="rewardBox" class="bg-yellow-100 border-4 border-yellow-400 rounded-3xl p-6 max-w-sm mx-auto flex flex-col items-center gap-3 card-shadow">
+                <div id="rewardIcon" class="text-7xl animate-bounce">🧸</div>
+                <h3 id="rewardName" class="text-2xl font-bold text-yellow-900">Nounours Rigolo</h3>
+                <p class="text-sm text-yellow-800">Ajouté à ta collection de trésors !</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 pt-4">
+                <button onclick="showCategoryMenu()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold px-6 py-3 rounded-2xl btn-3d">
+                    Menu Principal
+                </button>
+                <button id="nextLevelBtn" onclick="nextLevel()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-2xl btn-3d text-lg">
+                    Niveau Suivant 🚀
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- PROFILE MANAGEMENT MODAL -->
+    <div id="profileModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full card-shadow relative pop-in">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 rounded-full w-9 h-9 flex items-center justify-center font-bold text-gray-700">✕</button>
+            
+            <h2 class="text-2xl font-bold text-indigo-800 text-center mb-4">👤 Profils des Joueurs</h2>
+            
+            <div id="profilesList" class="space-y-3 my-4 max-h-60 overflow-y-auto p-1">
+                <!-- Profiles rendered here -->
+            </div>
+
+            <form onsubmit="createNewProfile(event)" class="mt-4 pt-4 border-t flex gap-2">
+                <input type="text" id="newProfileInput" placeholder="Nouveau prénom (ex: Astrid)" maxlength="15" required class="flex-1 px-4 py-2 border-2 border-indigo-200 rounded-2xl focus:outline-none focus:border-indigo-500 font-bold">
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-2xl font-bold btn-3d">
+                    + Créer
+                </button>
+            </form>
+            <p class="text-xs text-gray-400 mt-2 text-center">Astuce: Entrez "Astridtmt" pour débloquer tout le jeu !</p>
+        </div>
+    </div>
+
+    <!-- REWARDS MODAL -->
+    <div id="rewardsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto card-shadow relative pop-in">
+            <button onclick="closeRewardsModal()" class="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 rounded-full w-10 h-10 flex items-center justify-center font-bold text-gray-700 text-xl">
+                ✕
+            </button>
+            
+            <h2 class="text-3xl font-bold text-indigo-800 text-center mb-1">🏆 Tes Trésors Débloqués</h2>
+            <p class="text-center text-gray-600 mb-6 text-sm sm:text-base">Réussis des niveaux pour collectionner tous les jouets !</p>
+
+            <div id="rewardsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Dynamically filled with unlocked or locked rewards -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- PROFILES & USER STATE MANAGEMENT ---
+        let profiles = JSON.parse(localStorage.getItem('edu_profiles_v2') || '[]');
+        let activeProfileName = localStorage.getItem('edu_active_profile_v2') || 'Astrid';
+
+        // Ensure default profile exists if list is empty
+        if (profiles.length === 0) {
+            profiles = [{ name: 'Astrid', stars: 0, unlockedRewards: [] }];
+            saveProfiles();
+        }
+
+        function getActiveProfile() {
+            let p = profiles.find(pr => pr.name.toLowerCase() === activeProfileName.toLowerCase());
+            if (!p) {
+                p = profiles[0];
+                activeProfileName = p.name;
+            }
+            return p;
+        }
+
+        function saveProfiles() {
+            localStorage.setItem('edu_profiles_v2', JSON.stringify(profiles));
+            localStorage.setItem('edu_active_profile_v2', activeProfileName);
+        }
+
+        function isCheatProfile() {
+            return activeProfileName.trim().toLowerCase() === 'astridtmt';
+        }
+
+        // --- GAME VARIABLES ---
+        let currentCategory = '';
+        let currentLevelIndex = 0;
+        let currentQuestionIndex = 0;
+        const totalQuestionsPerLevel = 5;
+        let currentQuestionObj = null;
+        let wrongAttempts = 0;
+
+        // --- WEB AUDIO API (Sound FX) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                    osc.frequency.exponentialRampToValueAtTime(130, audioCtx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.25);
+                } else if (type === 'win') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, i) => {
+                        const noteOsc = audioCtx.createOscillator();
+                        const noteGain = audioCtx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(audioCtx.destination);
+                        noteOsc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.12);
+                        noteGain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.12);
+                        noteGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.12 + 0.25);
+                        noteOsc.start(audioCtx.currentTime + i * 0.12);
+                        noteOsc.stop(audioCtx.currentTime + i * 0.12 + 0.25);
+                    });
+                }
+            } catch (e) { console.log('Audio error:', e); }
+        }
+
+        // --- SPEECH SYNTHESIS IMPROVED ---
+        let availableVoices = [];
+
+        function loadVoices() {
+            if ('speechSynthesis' in window) {
+                availableVoices = window.speechSynthesis.getVoices();
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+        }
+
+        // Unlocking audio/speech on first interaction
+        document.addEventListener('click', function unlockAudio() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking === false) {
+                // Silent utterance to unlock browser speech restrictions
+                const dummy = new SpeechSynthesisUtterance('');
+                window.speechSynthesis.speak(dummy);
+            }
+            document.removeEventListener('click', unlockAudio);
+        }, { once: true });
+
+        function speakEnglishText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop current speech
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; // Slower for kids
+
+                // Select English voice dynamically
+                if (availableVoices.length === 0) {
+                    availableVoices = window.speechSynthesis.getVoices();
+                }
+
+                const englishVoice = availableVoices.find(v => v.lang.startsWith('en') || v.lang.includes('US') || v.lang.includes('GB'));
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Désolé, la synthèse vocale n'est pas supportée sur ce navigateur.");
+            }
+        }
+
+        function speakCurrentText() {
+            if (currentQuestionObj && currentQuestionObj.speechText) {
+                speakEnglishText(currentQuestionObj.speechText);
+            }
+        }
+
+        // --- REWARDS DATABASE (10 levels per category) ---
+        const rewards = [
+            // Maths
+            { id: 'maths_0', name: 'Robot Rigolo', icon: '🤖', category: 'maths', level: 0 },
+            { id: 'maths_1', name: 'Fusée Spatiale', icon: '🚀', category: 'maths', level: 1 },
+            { id: 'maths_2', name: 'Licorne Magique', icon: '🦄', category: 'maths', level: 2 },
+            { id: 'maths_3', name: 'Calculatrice d\'Or', icon: '🧮', category: 'maths', level: 3 },
+            { id: 'maths_4', name: 'Soucoupe Volante', icon: '🛸', category: 'maths', level: 4 },
+            { id: 'maths_5', name: 'Étoile Brillante', icon: '🌟', category: 'maths', level: 5 },
+            { id: 'maths_6', name: 'Château de Cristal', icon: '🏰', category: 'maths', level: 6 },
+            { id: 'maths_7', name: 'Super Robot 2.0', icon: '👾', category: 'maths', level: 7 },
+            { id: 'maths_8', name: 'Trophée d\'Or', icon: '🏆', category: 'maths', level: 8 },
+            { id: 'maths_9', name: 'Couronne Royale', icon: '👑', category: 'maths', level: 9 },
+
+            // English
+            { id: 'english_0', name: 'Petit Chien', icon: '🐶', category: 'english', level: 0 },
+            { id: 'english_1', name: 'Petit Chat', icon: '🐱', category: 'english', level: 1 },
+            { id: 'english_2', name: 'Super Dinosaure', icon: '🦖', category: 'english', level: 2 },
+            { id: 'english_3', name: 'Oiseau Chanteur', icon: '🐦', category: 'english', level: 3 },
+            { id: 'english_4', name: 'Panda Trop Mignon', icon: '🐼', category: 'english', level: 4 },
+            { id: 'english_5', name: 'Dauphin Sauteur', icon: '🐬', category: 'english', level: 5 },
+            { id: 'english_6', name: 'Papillon Multicolore', icon: '🦋', category: 'english', level: 6 },
+            { id: 'english_7', name: 'Lion Majestueux', icon: '🦁', category: 'english', level: 7 },
+            { id: 'english_8', name: 'Dragon Magique', icon: '🐉', category: 'english', level: 8 },
+            { id: 'english_9', name: 'Bus Anglais ROUGE', icon: '🚌', category: 'english', level: 9 },
+
+            // Logic
+            { id: 'logic_0', name: 'Ours Peluche', icon: '🧸', category: 'logic', level: 0 },
+            { id: 'logic_1', name: 'Voiture de Course', icon: '🏎️', category: 'logic', level: 1 },
+            { id: 'logic_2', name: 'Étoile Filante', icon: '🌠', category: 'logic', level: 2 },
+            { id: 'logic_3', name: 'Puzzle Magique', icon: '🧩', category: 'logic', level: 3 },
+            { id: 'logic_4', name: 'Ballon de Basket', icon: '🏀', category: 'logic', level: 4 },
+            { id: 'logic_5', name: 'Gâteau d\'Anniversaire', icon: '🎂', category: 'logic', level: 5 },
+            { id: 'logic_6', name: 'Baguette Magique', icon: '🪄', category: 'logic', level: 6 },
+            { id: 'logic_7', name: 'Coffre au Trésor', icon: '💎', category: 'logic', level: 7 },
+            { id: 'logic_8', name: 'Bateau Pirate', icon: '🏴‍☠️', category: 'logic', level: 8 },
+            { id: 'logic_9', name: 'Planète Saturne', icon: '🪐', category: 'logic', level: 9 }
+        ];
+
+        // --- EDUCATIONAL GAME CONTENT (10 levels each) ---
+        const gameData = {
+            maths: [
+                // Level 1: Compter jusqu'à 5
+                {
+                    title: "Compter jusqu'à 5",
+                    generator: () => {
+                        const count = Math.floor(Math.random() * 5) + 1;
+                        const items = ['🍎', '🐥', '⭐', '🎈', '🚗'];
+                        const item = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: "Combien y a-t-il d'objets ?",
+                            display: Array(count).fill(item).join(' '),
+                            correct: count.toString(),
+                            hint: `Compte doucement avec ton doigt : 1, 2, 3... Il y a ${count} ${item} !`,
+                            options: shuffleArray([count.toString(), (count % 5 + 1).toString(), (Math.max(1, count - 1)).toString(), "6"]).slice(0, 4)
+                        };
+                    }
+                },
+                // Level 2: Compter de 5 à 10
+                {
+                    title: "Compter de 5 à 10",
+                    generator: () => {
+                        const count = Math.floor(Math.random() * 5) + 6;
+                        return {
+                            question: "Combien y a-t-il de bonbons ?",
+                            display: Array(count).fill('🍬').join(' '),
+                            correct: count.toString(),
+                            hint: `Il y en a plus que 5 ! Compte tous les bonbons : 1, 2, 3, 4, 5... et continue !`,
+                            options: shuffleArray([count.toString(), (count - 1).toString(), (count + 1).toString(), "5"]).slice(0, 4)
+                        };
+                    }
+                },
+                // Level 3: Additions simples avec 1
+                {
+                    title: "Additions faciles (+1)",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 8) + 1;
+                        const ans = a + 1;
+                        return {
+                            question: `Combien font ${a} + 1 ?`,
+                            display: `${a} ➕ 1 = ❓`,
+                            correct: ans.toString(),
+                            hint: `Ajouter 1, c'est juste prendre le nombre qui vient tout de suite après ${a} !`,
+                            options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1).toString(), (ans + 2).toString()])
+                        };
+                    }
+                },
+                // Level 4: Petites additions jusqu'à 10
+                {
+                    title: "Petites Additions",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 4) + 1;
+                        const b = Math.floor(Math.random() * 4) + 1;
+                        const ans = a + b;
+                        return {
+                            question: `Combien font ${a} + ${b} ?`,
+                            display: `${a} ➕ ${b} = ❓`,
+                            correct: ans.toString(),
+                            hint: `Pars de ${a} et avance de ${b} étapes sur tes doigts !`,
+                            options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1 > 0 ? ans - 1 : ans + 2).toString(), (ans + 3).toString()])
+                        };
+                    }
+                },
+                // Level 5: Comparer deux nombres (Plus grand)
+                {
+                    title: "Le plus GRAND nombre",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 9) + 1;
+                        let b = Math.floor(Math.random() * 9) + 1;
+                        while(a === b) b = Math.floor(Math.random() * 9) + 1;
+                        const max = Math.max(a, b);
+                        return {
+                            question: "Quel est le plus GRAND nombre ?",
+                            display: `<span class="text-blue-600 font-bold">${a}</span> ou <span class="text-pink-600 font-bold">${b}</span> ?`,
+                            correct: max.toString(),
+                            hint: `Lequel de ces deux nombres représente le plus de bonbons ?`,
+                            options: [a.toString(), b.toString()]
+                        };
+                    }
+                },
+                // Level 6: Soustractions simples (-1)
+                {
+                    title: "Soustractions faciles (-1)",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 8) + 2;
+                        const ans = a - 1;
+                        return {
+                            question: `Combien font ${a} - 1 ?`,
+                            display: `${a} ➖ 1 = ❓`,
+                            correct: ans.toString(),
+                            hint: `Enlever 1, c't prendre le nombre juste avant ${a} quand tu comptes !`,
+                            options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1 >= 0 ? ans - 1 : ans + 2).toString(), (ans + 3).toString()])
+                        };
+                    }
+                },
+                // Level 7: Compléter la série
+                {
+                    title: "Suites de nombres",
+                    generator: () => {
+                        const start = Math.floor(Math.random() * 6) + 1;
+                        const correct = start + 2;
+                        return {
+                            question: "Quel nombre manque-t-il ?",
+                            display: `${start} , ${start + 1} , <span class="text-indigo-600 font-bold">❓</span> , ${start + 3}`,
+                            correct: correct.toString(),
+                            hint: `Compte dans l'ordre : ${start}, ${start + 1}, ... Quel nombre vient ensuite ?`,
+                            options: shuffleArray([correct.toString(), (correct + 1).toString(), (correct - 2).toString(), (correct + 3).toString()])
+                        };
+                    }
+                },
+                // Level 8: Doubles simples (1+1, 2+2, 3+3, 4+4, 5+5)
+                {
+                    title: "Les Doubles",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 5) + 1;
+                        const ans = a + a;
+                        return {
+                            question: `Combien fait le double de ${a} (${a} + ${a}) ?`,
+                            display: `${a} ➕ ${a} = ❓`,
+                            correct: ans.toString(),
+                            hint: `Imagine ${a} doigts sur ta main gauche et ${a} doigts sur ta main droite, puis compte-les tous !`,
+                            options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1 > 0 ? ans - 1 : ans + 2).toString(), (ans + 2).toString()])
+                        };
+                    }
+                },
+                // Level 9: Soustractions jusqu'à 10
+                {
+                    title: "Petites Soustractions",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 5) + 5;
+                        const b = Math.floor(Math.random() * 4) + 1;
+                        const ans = a - b;
+                        return {
+                            question: `Combien font ${a} - ${b} ?`,
+                            display: `${a} ➖ ${b} = ❓`,
+                            correct: ans.toString(),
+                            hint: `Imagine que tu as ${a} pommes et qu'on en mange ${b}. Combien il en reste ?`,
+                            options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1 >= 0 ? ans - 1 : ans + 2).toString(), (ans + 3).toString()])
+                        };
+                    }
+                },
+                // Level 10: Défi Champion Maths
+                {
+                    title: "Grand Défi Champion",
+                    generator: () => {
+                        const a = Math.floor(Math.random() * 6) + 2;
+                        const b = Math.floor(Math.random() * 4) + 1;
+                        const isAdd = Math.random() > 0.5;
+                        const ans = isAdd ? a + b : a - b;
+                        return {
+                            question: isAdd ? `Combien font ${a} + ${b} ?` : `Combien font ${a} - ${b} ?`,
+                            display: `${a} ${isAdd ? '➕' : '➖'} ${b} = ❓`,
+                            correct: ans.toString(),
+                            hint: isAdd ? `C'est une addition : ajoute ${b} à ${a} !` : `C'est une soustraction : enlève ${b} à ${a} !`,
+                            options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1 >= 0 ? ans - 1 : ans + 2).toString(), (ans + 2).toString()])
+                        };
+                    }
+                }
+            ],
+
+            english: [
+                // Level 1: Animaux de compagnie
+                {
+                    title: "Animals (Animaux)",
+                    generator: () => {
+                        const items = [
+                            { word: "Cat", emoji: "🐱", fr: "Chat", hint: "Clique sur le bouton 🔊 à côté des mots pour les écouter !" },
+                            { word: "Dog", emoji: "🐶", fr: "Chien", hint: "Écoute bien la prononciation avec le bouton 🔊 !" },
+                            { word: "Fish", emoji: "🐟", fr: "Poisson", hint: "Utilise la touche 🔊 pour entendre le bon mot !" },
+                            { word: "Bird", emoji: "🐦", fr: "Oiseau", hint: "Écoute les mots un par un avec le bouton 🔊 !" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Comment dit-on "${t.fr}" en anglais ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: t.hint,
+                            options: shuffleArray([t.word, "Rabbit", "Mouse", "Tiger"])
+                        };
+                    }
+                },
+                // Level 2: Couleurs
+                {
+                    title: "Colors (Les Couleurs)",
+                    generator: () => {
+                        const items = [
+                            { word: "Red", color: "bg-red-500", fr: "Rouge" },
+                            { word: "Blue", color: "bg-blue-500", fr: "Bleu" },
+                            { word: "Green", color: "bg-green-500", fr: "Vert" },
+                            { word: "Yellow", color: "bg-yellow-400", fr: "Jaune" },
+                            { word: "Pink", color: "bg-pink-400", fr: "Rose" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Traduis la couleur "${t.fr}" :`,
+                            display: `<div class="w-20 h-20 ${t.color} rounded-2xl shadow-inner border-4 border-white"></div>`,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Pense à écouter les sons avec la touche 🔊 à côté des mots !`,
+                            options: shuffleArray([t.word, "Black", "White", "Purple"])
+                        };
+                    }
+                },
+                // Level 3: Nombres en anglais (1-5)
+                {
+                    title: "Numbers (1 à 5)",
+                    generator: () => {
+                        const numbers = [
+                            { word: "One", val: 1, display: "1️⃣" },
+                            { word: "Two", val: 2, display: "2️⃣" },
+                            { word: "Three", val: 3, display: "3️⃣" },
+                            { word: "Four", val: 4, display: "4️⃣" },
+                            { word: "Five", val: 5, display: "5️⃣" }
+                        ];
+                        const t = numbers[Math.floor(Math.random() * numbers.length)];
+                        return {
+                            question: `Comment dit-on le chiffre ${t.val} en anglais ?`,
+                            display: t.display,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Compte en anglais : One (1), Two (2), Three (3), Four (4), Five (5) !`,
+                            options: shuffleArray([t.word, "Six", "Seven", "Zero"])
+                        };
+                    }
+                },
+                // Level 4: Fruits
+                {
+                    title: "Fruits (Les Fruits)",
+                    generator: () => {
+                        const items = [
+                            { word: "Apple", emoji: "🍎", fr: "Pomme" },
+                            { word: "Banana", emoji: "🍌", fr: "Banane" },
+                            { word: "Orange", emoji: "🍊", fr: "Orange" },
+                            { word: "Strawberry", emoji: "🍓", fr: "Fraise" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Quel est le mot anglais pour "${t.fr}" ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Écoute les propositions en cliquant sur les haut-parleurs 🔊 !`,
+                            options: shuffleArray([t.word, "Grape", "Lemon", "Peach"])
+                        };
+                    }
+                },
+                // Level 5: Météo & Nature
+                {
+                    title: "Nature & Weather",
+                    generator: () => {
+                        const items = [
+                            { word: "Sun", emoji: "☀️", fr: "Soleil" },
+                            { word: "Star", emoji: "⭐", fr: "Étoile" },
+                            { word: "Rain", emoji: "🌧️", fr: "Pluie" },
+                            { word: "Tree", emoji: "🌳", fr: "Arbre" },
+                            { word: "Flower", emoji: "🌻", fr: "Fleur" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Comment dit-on "${t.fr}" en anglais ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `N'hésite pas à tester les touches 🔊 à côté des choix !`,
+                            options: shuffleArray([t.word, "Moon", "Cloud", "Snow"])
+                        };
+                    }
+                },
+                // Level 6: La famille & Personnes
+                {
+                    title: "Family (La Famille)",
+                    generator: () => {
+                        const items = [
+                            { word: "Baby", emoji: "👶", fr: "Bébé" },
+                            { word: "Boy", emoji: "👦", fr: "Garçon" },
+                            { word: "Girl", emoji: "👧", fr: "Fille" },
+                            { word: "King", emoji: "👑", fr: "Roi" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Comment dit-on "${t.fr}" en anglais ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Écoute chaque choix avec le bouton 🔊 !`,
+                            options: shuffleArray([t.word, "Queen", "Man", "Doctor"])
+                        };
+                    }
+                },
+                // Level 7: Véhicules & Transports
+                {
+                    title: "Vehicles (Transports)",
+                    generator: () => {
+                        const items = [
+                            { word: "Car", emoji: "🚗", fr: "Voiture" },
+                            { word: "Bus", emoji: "🚌", fr: "Bus" },
+                            { word: "Plane", emoji: "✈️", fr: "Avion" },
+                            { word: "Boat", emoji: "⛵", fr: "Bateau" },
+                            { word: "Train", emoji: "🚂", fr: "Train" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Comment dit-on "${t.fr}" en anglais ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Aide-toi du son des mots avec la touche 🔊 !`,
+                            options: shuffleArray([t.word, "Bike", "Rocket", "Taxi"])
+                        };
+                    }
+                },
+                // Level 8: Le corps humain
+                {
+                    title: "Body Parts (Le Corps)",
+                    generator: () => {
+                        const items = [
+                            { word: "Eye", emoji: "👁️", fr: "Œil" },
+                            { word: "Hand", emoji: "✋", fr: "Main" },
+                            { word: "Foot", emoji: "🦶", fr: "Pied" },
+                            { word: "Ear", emoji: "👂", fr: "Oreille" },
+                            { word: "Nose", emoji: "👃", fr: "Nez" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Comment se nomme "${t.fr}" en anglais ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Clique sur les boutons 🔊 pour entendre la prononciation !`,
+                            options: shuffleArray([t.word, "Mouth", "Head", "Arm"])
+                        };
+                    }
+                },
+                // Level 9: Salutations & Mots magiques
+                {
+                    title: "Greetings (Salutations)",
+                    generator: () => {
+                        const items = [
+                            { word: "Hello", emoji: "👋", fr: "Bonjour" },
+                            { word: "Goodbye", emoji: "🖐️", fr: "Au revoir" },
+                            { word: "Thank you", emoji: "🙏", fr: "Merci" },
+                            { word: "Yes", emoji: "👍", fr: "Oui" },
+                            { word: "No", emoji: "👎", fr: "Non" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Comment dit-on "${t.fr}" en anglais ?`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Teste les haut-parleurs 🔊 pour écouter les mots !`,
+                            options: shuffleArray([t.word, "Please", "Sorry", "Welcome"])
+                        };
+                    }
+                },
+                // Level 10: Grand Quiz d'Anglais
+                {
+                    title: "English Champion Quiz",
+                    generator: () => {
+                        const items = [
+                            { word: "House", emoji: "🏠", fr: "Maison" },
+                            { word: "Book", emoji: "📖", fr: "Livre" },
+                            { word: "Dog", emoji: "🐶", fr: "Chien" },
+                            { word: "Sun", emoji: "☀️", fr: "Soleil" },
+                            { word: "Water", emoji: "💧", fr: "Eau" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: `Traduis "${t.fr}" en anglais :`,
+                            display: t.emoji,
+                            correct: t.word,
+                            speechText: t.word,
+                            hint: `Utilise le bouton 🔊 pour écouter la réponse !`,
+                            options: shuffleArray([t.word, "Milk", "Fire", "Tree"])
+                        };
+                    }
+                }
+            ],
+
+            logic: [
+                // Level 1: Formes basiques
+                {
+                    title: "Formes Géométriques",
+                    generator: () => {
+                        const items = [
+                            { name: "Cercle", icon: "🔴", hint: "Cette forme est toute ronde, comme un ballon !" },
+                            { name: "Carré", icon: "🟦", hint: "Cette forme a 4 côtés parfaitement égaux !" },
+                            { name: "Triangle", icon: "🔺", hint: "Cette forme a 3 coins bien pointus !" },
+                            { name: "Étoile", icon: "⭐", hint: "C'est la forme qui brille dans le ciel la nuit !" },
+                            { name: "Cœur", icon: "❤️", hint: "C'est le symbole de l'amour !" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: "Quelle est cette forme ?",
+                            display: t.icon,
+                            correct: t.name,
+                            hint: t.hint,
+                            options: shuffleArray([t.name, "Losange", "Ovale", "Rectangle"])
+                        };
+                    }
+                },
+                // Level 2: Suites logiques d'émojis
+                {
+                    title: "Suites de Couleurs & Formes",
+                    generator: () => {
+                        const suites = [
+                            { seq: "🔴 🔵 🔴 🔵", next: "🔴", alt: "🔵" },
+                            { seq: "🐶 🐱 🐶 🐱", next: "🐶", alt: "🐱" },
+                            { seq: "⭐ ⭐ 🌙 ⭐ ⭐", next: "🌙", alt: "⭐" },
+                            { seq: "🍎 🍏 🍎 🍏", next: "🍎", alt: "🍏" }
+                        ];
+                        const t = suites[Math.floor(Math.random() * suites.length)];
+                        return {
+                            question: "Qu'est-ce qui vient juste après ?",
+                            display: `${t.seq} ❓`,
+                            correct: t.next,
+                            hint: `Observe le rythme et la répétition dans l'image !`,
+                            options: shuffleArray([t.next, t.alt, "🎈", "🚗"])
+                        };
+                    }
+                },
+                // Level 3: L'Intrus
+                {
+                    title: "Trouve l'Intrus",
+                    generator: () => {
+                        const sets = [
+                            { items: ["🍎", "🍌", "🍓"], intrus: "🚗", hint: "Trois de ces choses se mangent, mais pas la quatrième !" },
+                            { items: ["🐶", "🐱", "🐰"], intrus: "🍕", hint: "Regarde bien : il y a des animaux et un aliment !" },
+                            { items: ["⚽", "🏀", "🎾"], intrus: "📱", hint: "Les ballons servent à jouer au sport !" },
+                            { items: ["✈️", "🚀", "Helicopter"], intrus: "🐟", hint: "Trois d'entre eux volent dans le ciel !" }
+                        ];
+                        const t = sets[Math.floor(Math.random() * sets.length)];
+                        return {
+                            question: "Clique sur l'INTRUS (celui qui ne va pas avec les autres) :",
+                            display: shuffleArray([...t.items, t.intrus]).join(' '),
+                            correct: t.intrus,
+                            hint: t.hint,
+                            options: shuffleArray([...t.items, t.intrus])
+                        };
+                    }
+                },
+                // Level 4: Les Tailles (Petit / Grand)
+                {
+                    title: "Tailles & Proportions",
+                    generator: () => {
+                        const isBig = Math.random() > 0.5;
+                        return {
+                            question: isBig ? "Clique sur le PLUS GRAND animal !" : "Clique sur le PLUS PETIT animal !",
+                            display: "🐘 vs 🐭",
+                            correct: isBig ? "Elephant 🐘" : "Souris 🐭",
+                            hint: isBig ? "L'éléphant est énorme !" : "La souris est toute petite !",
+                            options: shuffleArray(["Elephant 🐘", "Souris 🐭"])
+                        };
+                    }
+                },
+                // Level 5: Paires & Associations
+                {
+                    title: "Paires & Associations",
+                    generator: () => {
+                        const pairs = [
+                            { q: "Où vit le poisson 🐟 ?", correct: "L'eau 🌊", wrong: "L'arbre 🌳", hint: "Le poisson a besoin de nager pour vivre !" },
+                            { q: "Que mange le lapin 🐰 ?", correct: "La carotte 🥕", wrong: "Le fromage 🧀", hint: "C'est un légume orange très croquant !" },
+                            { q: "Où dort l'oiseau 🐦 ?", correct: "Le nid 🪹", wrong: "La niche 🏠", hint: "Il le fabrique avec des petites branches dans l'arbre !" },
+                            { q: "Où brille le soleil ☀️ ?", correct: "Le ciel ☁️", wrong: "La mer 🌊", hint: "Regarde tout là-haut au-dessus de nous !" }
+                        ];
+                        const t = pairs[Math.floor(Math.random() * pairs.length)];
+                        return {
+                            question: t.q,
+                            display: "🧩",
+                            correct: t.correct,
+                            hint: t.hint,
+                            options: shuffleArray([t.correct, t.wrong, "La voiture 🚗", "Le lit 🛋️"])
+                        };
+                    }
+                },
+                // Level 6: Devinettes sur la nature
+                {
+                    title: "Devinettes Malignes",
+                    generator: () => {
+                        const devinettes = [
+                            { q: "Je suis jaune et je brille dans le ciel le jour. Qui suis-je ?", correct: "Le Soleil ☀️", hint: "Il apporte la lumière et la chaleur !" },
+                            { q: "J'ai quatre roues et un volant. Qui suis-je ?", correct: "La Voiture 🚗", hint: "Elle roule sur la route !" },
+                            { q: "Je miaule et j'adore le lait. Qui suis-je ?", correct: "Le Chat 🐱", hint: "Il fait 'Miaou' !" },
+                            { q: "Je tombe du ciel quand il pleut. Qui suis-je ?", correct: "L'Eau 🌧️", hint: "On utilise un parapluie pour se protéger !" }
+                        ];
+                        const t = devinettes[Math.floor(Math.random() * devinettes.length)];
+                        return {
+                            question: t.q,
+                            display: "🤔",
+                            correct: t.correct,
+                            hint: t.hint,
+                            options: shuffleArray([t.correct, "La Lune 🌙", "Le Chien 🐶", "L'Avion ✈️"])
+                        };
+                    }
+                },
+                // Level 7: Métiers & Outils
+                {
+                    title: "Les Métiers",
+                    generator: () => {
+                        const items = [
+                            { q: "Qui éteint les incendies 🚒 ?", correct: "Le Pompier 🧑‍🚒", hint: "Il conduit le grand camion rouge !" },
+                            { q: "Qui soigne les malades 🩺 ?", correct: "Le Médecin 🧑‍⚕️", hint: "Il travaille à l'hôpital ou dans son cabinet !" },
+                            { q: "Qui fabrique le bon pain 🥖 ?", correct: "Le Boulanger 🥖", hint: "On va chez lui acheter des croissants !" },
+                            { q: "Qui vole dans l'espace 🚀 ?", correct: "L'Astronaute 🧑‍🚀", hint: "Il monte dans une fusée spatiale !" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: t.q,
+                            display: "💼",
+                            correct: t.correct,
+                            hint: t.hint,
+                            options: shuffleArray([t.correct, "Le Pirate 🏴‍☠️", "Le Clown 🤡", "Le Magicien 🪄"])
+                        };
+                    }
+                },
+                // Level 8: Heures & Moment de la journée
+                {
+                    title: "Moments de la Journée",
+                    generator: () => {
+                        const items = [
+                            { q: "Quand prends-tu le petit-déjeuner 🥣 ?", correct: "Le Matin 🌅", hint: "C'est quand tu viens juste de te réveiller !" },
+                            { q: "Quand regarde-t-on les étoiles ⭐ ?", correct: "La Nuit 🌙", hint: "C'est quand il fait tout noir dehors !" },
+                            { q: "Quand dort-on dans son lit 🛏️ ?", correct: "La Nuit 🌙", hint: "C'est l'heure d'aller se coucher !" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: t.q,
+                            display: "⏰",
+                            correct: t.correct,
+                            hint: t.hint,
+                            options: shuffleArray([t.correct, "L'Après-midi ☀️", "En Hiver ❄️"])
+                        };
+                    }
+                },
+                // Level 9: Saisons
+                {
+                    title: "Les 4 Saisons",
+                    generator: () => {
+                        const items = [
+                            { q: "Quelle saison fait-il quand il neige ☃️ ?", correct: "L'Hiver ❄️", hint: "On met un grand manteau, un bonnet et des gants !" },
+                            { q: "Quelle saison fait-il très chaud pour se baigner 🏖️ ?", correct: "L'Été ☀️", hint: "C'est le moment des grandes vacances à la plage !" },
+                            { q: "Quand les feuilles tombent des arbres 🍂 ?", correct: "L'Automne 🍁", hint: "Les feuilles deviennent rouges et jaunes !" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: t.q,
+                            display: "🗓️",
+                            correct: t.correct,
+                            hint: t.hint,
+                            options: shuffleArray([t.correct, "Le Printemps 🌸", "La Nuit 🌙"])
+                        };
+                    }
+                },
+                // Level 10: Champion de Logique
+                {
+                    title: "Grand Défi Logique",
+                    generator: () => {
+                        const items = [
+                            { q: "Combien de pattes a un chien 🐶 ?", correct: "4 pattes", hint: "Deux devant et deux derrière !" },
+                            { q: "Combien de roues a un vélo 🚲 ?", correct: "2 roues", hint: "Une roue à l'avant et une roue à l'arrière !" },
+                            { q: "De quelle couleur est l'herbe 🌿 ?", correct: "Verte 💚", hint: "Comme la couleur des arbres et des feuilles !" }
+                        ];
+                        const t = items[Math.floor(Math.random() * items.length)];
+                        return {
+                            question: t.q,
+                            display: "🏆",
+                            correct: t.correct,
+                            hint: t.hint,
+                            options: shuffleArray([t.correct, "2 pattes", "8 roues", "Bleue 💙"])
+                        };
+                    }
+                }
+            ]
+        };
+
+        // --- HELPER FUNCTIONS ---
+        function shuffleArray(arr) {
+            return [...arr].sort(() => Math.random() - 0.5);
+        }
+
+        function updateProfileUI() {
+            const profile = getActiveProfile();
+            document.getElementById('currentProfileName').innerText = profile.name + (isCheatProfile() ? " ⚡" : "");
+            document.getElementById('starCount').innerText = isCheatProfile() ? '999' : profile.stars;
+        }
+
+        function showCategoryMenu() {
+            document.getElementById('homeBtn').classList.add('hidden');
+            document.getElementById('categoryMenu').classList.remove('hidden');
+            document.getElementById('levelMenu').classList.add('hidden');
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('winScreen').classList.add('hidden');
+            updateProfileUI();
+        }
+
+        function selectCategory(cat) {
+            currentCategory = cat;
+            document.getElementById('homeBtn').classList.remove('hidden');
+            document.getElementById('categoryMenu').classList.add('hidden');
+            document.getElementById('levelMenu').classList.remove('hidden');
+
+            const levelContainer = document.getElementById('levelButtonsContainer');
+            levelContainer.innerHTML = '';
+
+            const levels = gameData[cat];
+            const profile = getActiveProfile();
+
+            levels.forEach((lvl, idx) => {
+                const reward = rewards.find(r => r.category === cat && r.level === idx);
+                
+                // Unlocked if cheat code OR unlocked in profile OR level 0
+                const isUnlocked = isCheatProfile() || idx === 0 || profile.unlockedRewards.includes(reward.id) || (idx > 0 && profile.unlockedRewards.includes(`${cat}_${idx-1}`));
+
+                const btn = document.createElement('button');
+                btn.className = `p-4 rounded-2xl border-4 text-center flex flex-col justify-between items-center gap-2 card-shadow btn-3d cursor-pointer ${
+                    isUnlocked ? 'bg-gradient-to-b from-indigo-50 to-white border-indigo-300' : 'bg-gray-100 border-gray-200 opacity-60'
+                }`;
+                btn.onclick = () => {
+                    if (isUnlocked) startLevel(idx);
+                };
+
+                btn.innerHTML = `
+                    <span class="text-xs font-bold px-2 py-0.5 ${isUnlocked ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-200 text-gray-500'} rounded-full">Lvl ${idx + 1}</span>
+                    <div class="text-3xl">${isUnlocked ? (reward ? reward.icon : '🎁') : '🔒'}</div>
+                    <div class="text-xs font-bold text-gray-700 truncate w-full">${lvl.title}</div>
+                `;
+                levelContainer.appendChild(btn);
+            });
+        }
+
+        function startLevel(levelIdx) {
+            currentLevelIndex = levelIdx;
+            currentQuestionIndex = 0;
+
+            document.getElementById('levelMenu').classList.add('hidden');
+            document.getElementById('gameArea').classList.remove('hidden');
+            
+            const catNames = { maths: 'Mathématiques', english: 'Anglais', logic: 'Logique' };
+            document.getElementById('gameSubjectTag').innerText = `${catNames[currentCategory]} - Niveau ${currentLevelIndex + 1}`;
+
+            loadNextQuestion();
+        }
+
+        function loadNextQuestion() {
+            if (currentQuestionIndex >= totalQuestionsPerLevel) {
+                finishLevel();
+                return;
+            }
+
+            // Reset hint display & wrong attempt counter
+            wrongAttempts = 0;
+            const hintBox = document.getElementById('hintBox');
+            if (hintBox) hintBox.classList.add('hidden');
+
+            // Update Progress Bar
+            const percent = (currentQuestionIndex / totalQuestionsPerLevel) * 100;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressText').innerText = `${currentQuestionIndex}/${totalQuestionsPerLevel}`;
+
+            // Generate question
+            const levelConfig = gameData[currentCategory][currentLevelIndex];
+            currentQuestionObj = levelConfig.generator();
+
+            document.getElementById('questionText').innerText = currentQuestionObj.question;
+            document.getElementById('questionDisplay').innerHTML = currentQuestionObj.display;
+
+            // Show audio button if speech text available
+            const speakBtn = document.getElementById('speakQuestionBtn');
+            if (currentCategory === 'english' || currentQuestionObj.speechText) {
+                speakBtn.classList.remove('hidden');
+                // Automatically speak word in English after short delay
+                setTimeout(() => speakCurrentText(), 400);
+            } else {
+                speakBtn.classList.add('hidden');
+            }
+
+            // Generate option buttons
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+
+            currentQuestionObj.options.forEach(opt => {
+                const container = document.createElement('div');
+                
+                if (currentCategory === 'english') {
+                    // Structure : [ 🔊 ] [ Mot ]
+                    container.className = "flex items-center gap-2 w-full";
+                    container.innerHTML = `
+                        <button type="button" class="audio-btn bg-indigo-500 hover:bg-indigo-600 text-white font-bold p-3 sm:p-5 rounded-2xl btn-3d transition-all flex items-center justify-center text-xl sm:text-2xl shadow min-w-[55px] sm:min-w-[65px] h-full" title="Écouter le mot">
+                            <i class="fas fa-volume-up pointer-events-none"></i>
+                        </button>
+                        <button type="button" class="answer-btn bg-white hover:bg-indigo-50 border-4 border-indigo-200 hover:border-indigo-400 text-indigo-900 font-bold text-xl sm:text-2xl p-3 sm:p-5 rounded-2xl btn-3d transition-all flex-1 text-center min-h-[70px]">
+                            ${opt}
+                        </button>
+                    `;
+
+                    const audioBtn = container.querySelector('.audio-btn');
+                    const answerBtn = container.querySelector('.answer-btn');
+
+                    // Écouter le mot sans valider la réponse
+                    audioBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        speakEnglishText(opt);
+                    };
+
+                    // Valider la réponse
+                    answerBtn.onclick = () => {
+                        speakEnglishText(opt);
+                        checkAnswer(opt, answerBtn);
+                    };
+                } else {
+                    container.className = "w-full";
+                    const btn = document.createElement('button');
+                    btn.className = "answer-btn bg-white hover:bg-indigo-50 border-4 border-indigo-200 hover:border-indigo-400 text-indigo-900 font-bold text-xl sm:text-2xl p-3 sm:p-5 rounded-2xl btn-3d transition-all text-center min-h-[70px] w-full";
+                    btn.innerHTML = `<span>${opt}</span>`;
+                    btn.onclick = () => checkAnswer(opt, btn);
+                    container.appendChild(btn);
+                }
+
+                optionsGrid.appendChild(container);
+            });
+        }
+
+        function checkAnswer(selectedOpt, btnElement) {
+            const isCorrect = selectedOpt === currentQuestionObj.correct;
+            const buttons = document.querySelectorAll('#optionsGrid .answer-btn, #optionsGrid .audio-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                btnElement.classList.remove('bg-white', 'border-indigo-200');
+                btnElement.classList.add('bg-green-400', 'border-green-600', 'text-white', 'scale-105');
+                playSound('correct');
+                
+                const profile = getActiveProfile();
+                profile.stars += 1;
+                saveProfiles();
+                updateProfileUI();
+
+                currentQuestionIndex++;
+                setTimeout(() => loadNextQuestion(), 800);
+            } else {
+                btnElement.classList.remove('bg-white', 'border-indigo-200');
+                btnElement.classList.add('bg-red-400', 'border-red-600', 'text-white');
+                playSound('wrong');
+
+                wrongAttempts++;
+                // Show hint when wrong answer is selected
+                if (currentQuestionObj && currentQuestionObj.hint) {
+                    const hintBox = document.getElementById('hintBox');
+                    const hintText = document.getElementById('hintText');
+                    if (hintBox && hintText) {
+                        hintText.innerText = currentQuestionObj.hint;
+                        hintBox.classList.remove('hidden');
+                    }
+                }
+
+                setTimeout(() => {
+                    btnElement.classList.remove('bg-red-400', 'border-red-600', 'text-white');
+                    btnElement.classList.add('bg-white', 'border-indigo-200');
+                    buttons.forEach(b => b.disabled = false);
+                }, 800);
+            }
+        }
+
+        function finishLevel() {
+            playSound('win');
+            triggerConfetti();
+
+            const profile = getActiveProfile();
+            const reward = rewards.find(r => r.category === currentCategory && r.level === currentLevelIndex);
+            
+            if (reward && !profile.unlockedRewards.includes(reward.id)) {
+                profile.unlockedRewards.push(reward.id);
+                saveProfiles();
+            }
+
+            document.getElementById('rewardIcon').innerText = reward ? reward.icon : '🎁';
+            document.getElementById('rewardName').innerText = reward ? reward.name : 'Merveilleux Jouet';
+
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('winScreen').classList.remove('hidden');
+
+            const nextBtn = document.getElementById('nextLevelBtn');
+            if (currentLevelIndex >= gameData[currentCategory].length - 1) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
+        }
+
+        function nextLevel() {
+            if (currentLevelIndex < gameData[currentCategory].length - 1) {
+                startLevel(currentLevelIndex + 1);
+                document.getElementById('winScreen').classList.add('hidden');
+            } else {
+                showCategoryMenu();
+            }
+        }
+
+        // Confetti Generator
+        function triggerConfetti() {
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+            for (let i = 0; i < 40; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = '-10px';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 3500);
+            }
+        }
+
+        // --- PROFILES MODAL LOGIC ---
+        function openProfileModal() {
+            renderProfilesList();
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function renderProfilesList() {
+            const container = document.getElementById('profilesList');
+            container.innerHTML = '';
+
+            profiles.forEach((p, idx) => {
+                const isActive = p.name.toLowerCase() === activeProfileName.toLowerCase();
+                const isCheat = p.name.trim().toLowerCase() === 'astridtmt';
+
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center p-3 rounded-2xl border-2 ${
+                    isActive ? 'bg-indigo-50 border-indigo-400' : 'bg-gray-50 border-gray-200'
+                }`;
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-2 cursor-pointer flex-1" onclick="switchProfile('${p.name}')">
+                        <span class="text-2xl">${isCheat ? '⚡' : '👤'}</span>
+                        <div>
+                            <div class="font-bold text-gray-800">${p.name} ${isCheat ? '<span class="text-xs text-purple-600 font-bold">(DEBLOQUÉ!)</span>' : ''}</div>
+                            <div class="text-xs text-gray-500">⭐ ${isCheat ? '999' : p.stars} Étoiles</div>
+                        </div>
+                    </div>
+                    ${profiles.length > 1 ? `
+                        <button onclick="deleteProfile('${p.name}')" class="text-red-400 hover:text-red-600 p-2 font-bold">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function switchProfile(name) {
+            activeProfileName = name;
+            saveProfiles();
+            updateProfileUI();
+            closeProfileModal();
+            showCategoryMenu();
+        }
+
+        function createNewProfile(e) {
+            e.preventDefault();
+            const input = document.getElementById('newProfileInput');
+            const name = input.value.trim();
+            if (!name) return;
+
+            if (!profiles.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                profiles.push({ name: name, stars: 0, unlockedRewards: [] });
+            }
+            activeProfileName = name;
+            saveProfiles();
+            input.value = '';
+            closeProfileModal();
+            updateProfileUI();
+            showCategoryMenu();
+        }
+
+        function deleteProfile(name) {
+            if (profiles.length <= 1) return;
+            profiles = profiles.filter(p => p.name !== name);
+            if (activeProfileName === name) {
+                activeProfileName = profiles[0].name;
+            }
+            saveProfiles();
+            renderProfilesList();
+            updateProfileUI();
+        }
+
+        // --- REWARDS MODAL LOGIC ---
+        function openRewardsModal() {
+            const grid = document.getElementById('rewardsGrid');
+            grid.innerHTML = '';
+            const profile = getActiveProfile();
+
+            rewards.forEach(r => {
+                const isUnlocked = isCheatProfile() || profile.unlockedRewards.includes(r.id);
+
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-2xl border-2 flex flex-col items-center gap-1 text-center ${
+                    isUnlocked ? 'bg-yellow-50 border-yellow-300' : 'bg-gray-100 border-gray-200 opacity-50'
+                }`;
+
+                item.innerHTML = `
+                    <div class="text-4xl">${isUnlocked ? r.icon : '🔒'}</div>
+                    <span class="font-bold text-xs truncate w-full ${isUnlocked ? 'text-yellow-900' : 'text-gray-500'}">
+                        ${isUnlocked ? r.name : 'Mystère'}
+                    </span>
+                    <span class="text-[10px] text-gray-400 capitalize">${r.category} Lvl ${r.level + 1}</span>
+                `;
+                grid.appendChild(item);
+            });
+
+            document.getElementById('rewardsModal').classList.remove('hidden');
+        }
+
+        function closeRewardsModal() {
+            document.getElementById('rewardsModal').classList.add('hidden');
+        }
+
+        // Initial setup
+        updateProfileUI();
+    </script>
+</body>
+</html>
