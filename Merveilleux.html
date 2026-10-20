@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -264,7 +265,6 @@
         let profiles = JSON.parse(localStorage.getItem('edu_profiles_v2') || '[]');
         let activeProfileName = localStorage.getItem('edu_active_profile_v2') || 'Astrid';
 
-        // Ensure default profile exists if list is empty
         if (profiles.length === 0) {
             profiles = [{ name: 'Astrid', stars: 0, unlockedRewards: [] }];
             saveProfiles();
@@ -309,15 +309,15 @@
 
                 if (type === 'correct') {
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
                     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                     osc.start();
                     osc.stop(audioCtx.currentTime + 0.3);
                 } else if (type === 'wrong') {
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
                     osc.frequency.exponentialRampToValueAtTime(130, audioCtx.currentTime + 0.25);
                     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
@@ -340,7 +340,7 @@
             } catch (e) { console.log('Audio error:', e); }
         }
 
-        // --- SPEECH SYNTHESIS IMPROVED ---
+        // --- SPEECH SYNTHESIS ---
         let availableVoices = [];
 
         function loadVoices() {
@@ -356,13 +356,11 @@
             }
         }
 
-        // Unlocking audio/speech on first interaction
         document.addEventListener('click', function unlockAudio() {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
             if ('speechSynthesis' in window && window.speechSynthesis.speaking === false) {
-                // Silent utterance to unlock browser speech restrictions
                 const dummy = new SpeechSynthesisUtterance('');
                 window.speechSynthesis.speak(dummy);
             }
@@ -371,13 +369,11 @@
 
         function speakEnglishText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop current speech
-
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'en-US';
-                utterance.rate = 0.85; // Slower for kids
+                utterance.rate = 0.85;
 
-                // Select English voice dynamically
                 if (availableVoices.length === 0) {
                     availableVoices = window.speechSynthesis.getVoices();
                 }
@@ -399,9 +395,8 @@
             }
         }
 
-        // --- REWARDS DATABASE (10 levels per category) ---
+        // --- REWARDS DATABASE ---
         const rewards = [
-            // Maths
             { id: 'maths_0', name: 'Robot Rigolo', icon: '🤖', category: 'maths', level: 0 },
             { id: 'maths_1', name: 'Fusée Spatiale', icon: '🚀', category: 'maths', level: 1 },
             { id: 'maths_2', name: 'Licorne Magique', icon: '🦄', category: 'maths', level: 2 },
@@ -413,7 +408,6 @@
             { id: 'maths_8', name: 'Trophée d\'Or', icon: '🏆', category: 'maths', level: 8 },
             { id: 'maths_9', name: 'Couronne Royale', icon: '👑', category: 'maths', level: 9 },
 
-            // English
             { id: 'english_0', name: 'Petit Chien', icon: '🐶', category: 'english', level: 0 },
             { id: 'english_1', name: 'Petit Chat', icon: '🐱', category: 'english', level: 1 },
             { id: 'english_2', name: 'Super Dinosaure', icon: '🦖', category: 'english', level: 2 },
@@ -425,7 +419,6 @@
             { id: 'english_8', name: 'Dragon Magique', icon: '🐉', category: 'english', level: 8 },
             { id: 'english_9', name: 'Bus Anglais ROUGE', icon: '🚌', category: 'english', level: 9 },
 
-            // Logic
             { id: 'logic_0', name: 'Ours Peluche', icon: '🧸', category: 'logic', level: 0 },
             { id: 'logic_1', name: 'Voiture de Course', icon: '🏎️', category: 'logic', level: 1 },
             { id: 'logic_2', name: 'Étoile Filante', icon: '🌠', category: 'logic', level: 2 },
@@ -438,10 +431,9 @@
             { id: 'logic_9', name: 'Planète Saturne', icon: '🪐', category: 'logic', level: 9 }
         ];
 
-        // --- EDUCATIONAL GAME CONTENT (10 levels each) ---
+        // --- EDUCATIONAL GAME CONTENT ---
         const gameData = {
             maths: [
-                // Level 1: Compter jusqu'à 5
                 {
                     title: "Compter jusqu'à 5",
                     generator: () => {
@@ -457,7 +449,6 @@
                         };
                     }
                 },
-                // Level 2: Compter de 5 à 10
                 {
                     title: "Compter de 5 à 10",
                     generator: () => {
@@ -471,7 +462,6 @@
                         };
                     }
                 },
-                // Level 3: Additions simples avec 1
                 {
                     title: "Additions faciles (+1)",
                     generator: () => {
@@ -486,7 +476,6 @@
                         };
                     }
                 },
-                // Level 4: Petites additions jusqu'à 10
                 {
                     title: "Petites Additions",
                     generator: () => {
@@ -502,7 +491,6 @@
                         };
                     }
                 },
-                // Level 5: Comparer deux nombres (Plus grand)
                 {
                     title: "Le plus GRAND nombre",
                     generator: () => {
@@ -519,7 +507,6 @@
                         };
                     }
                 },
-                // Level 6: Soustractions simples (-1)
                 {
                     title: "Soustractions faciles (-1)",
                     generator: () => {
@@ -529,12 +516,11 @@
                             question: `Combien font ${a} - 1 ?`,
                             display: `${a} ➖ 1 = ❓`,
                             correct: ans.toString(),
-                            hint: `Enlever 1, c't prendre le nombre juste avant ${a} quand tu comptes !`,
+                            hint: `Enlever 1, c'est prendre le nombre juste avant ${a} quand tu comptes !`,
                             options: shuffleArray([ans.toString(), (ans + 1).toString(), (ans - 1 >= 0 ? ans - 1 : ans + 2).toString(), (ans + 3).toString()])
                         };
                     }
                 },
-                // Level 7: Compléter la série
                 {
                     title: "Suites de nombres",
                     generator: () => {
@@ -549,7 +535,6 @@
                         };
                     }
                 },
-                // Level 8: Doubles simples (1+1, 2+2, 3+3, 4+4, 5+5)
                 {
                     title: "Les Doubles",
                     generator: () => {
@@ -564,7 +549,6 @@
                         };
                     }
                 },
-                // Level 9: Soustractions jusqu'à 10
                 {
                     title: "Petites Soustractions",
                     generator: () => {
@@ -580,7 +564,6 @@
                         };
                     }
                 },
-                // Level 10: Défi Champion Maths
                 {
                     title: "Grand Défi Champion",
                     generator: () => {
@@ -600,7 +583,6 @@
             ],
 
             english: [
-                // Level 1: Animaux de compagnie
                 {
                     title: "Animals (Animaux)",
                     generator: () => {
@@ -621,7 +603,6 @@
                         };
                     }
                 },
-                // Level 2: Couleurs
                 {
                     title: "Colors (Les Couleurs)",
                     generator: () => {
@@ -643,7 +624,6 @@
                         };
                     }
                 },
-                // Level 3: Nombres en anglais (1-5)
                 {
                     title: "Numbers (1 à 5)",
                     generator: () => {
@@ -665,7 +645,6 @@
                         };
                     }
                 },
-                // Level 4: Fruits
                 {
                     title: "Fruits (Les Fruits)",
                     generator: () => {
@@ -686,7 +665,6 @@
                         };
                     }
                 },
-                // Level 5: Météo & Nature
                 {
                     title: "Nature & Weather",
                     generator: () => {
@@ -708,7 +686,6 @@
                         };
                     }
                 },
-                // Level 6: La famille & Personnes
                 {
                     title: "Family (La Famille)",
                     generator: () => {
@@ -729,7 +706,6 @@
                         };
                     }
                 },
-                // Level 7: Véhicules & Transports
                 {
                     title: "Vehicles (Transports)",
                     generator: () => {
@@ -751,7 +727,6 @@
                         };
                     }
                 },
-                // Level 8: Le corps humain
                 {
                     title: "Body Parts (Le Corps)",
                     generator: () => {
@@ -773,7 +748,6 @@
                         };
                     }
                 },
-                // Level 9: Salutations & Mots magiques
                 {
                     title: "Greetings (Salutations)",
                     generator: () => {
@@ -795,7 +769,6 @@
                         };
                     }
                 },
-                // Level 10: Grand Quiz d'Anglais
                 {
                     title: "English Champion Quiz",
                     generator: () => {
@@ -820,7 +793,6 @@
             ],
 
             logic: [
-                // Level 1: Formes basiques
                 {
                     title: "Formes Géométriques",
                     generator: () => {
@@ -841,7 +813,6 @@
                         };
                     }
                 },
-                // Level 2: Suites logiques d'émojis
                 {
                     title: "Suites de Couleurs & Formes",
                     generator: () => {
@@ -861,7 +832,6 @@
                         };
                     }
                 },
-                // Level 3: L'Intrus
                 {
                     title: "Trouve l'Intrus",
                     generator: () => {
@@ -869,7 +839,7 @@
                             { items: ["🍎", "🍌", "🍓"], intrus: "🚗", hint: "Trois de ces choses se mangent, mais pas la quatrième !" },
                             { items: ["🐶", "🐱", "🐰"], intrus: "🍕", hint: "Regarde bien : il y a des animaux et un aliment !" },
                             { items: ["⚽", "🏀", "🎾"], intrus: "📱", hint: "Les ballons servent à jouer au sport !" },
-                            { items: ["✈️", "🚀", "Helicopter"], intrus: "🐟", hint: "Trois d'entre eux volent dans le ciel !" }
+                            { items: ["✈️", "🚀", "🚁"], intrus: "🐟", hint: "Trois d'entre eux volent dans le ciel !" }
                         ];
                         const t = sets[Math.floor(Math.random() * sets.length)];
                         return {
@@ -881,7 +851,6 @@
                         };
                     }
                 },
-                // Level 4: Les Tailles (Petit / Grand)
                 {
                     title: "Tailles & Proportions",
                     generator: () => {
@@ -895,7 +864,6 @@
                         };
                     }
                 },
-                // Level 5: Paires & Associations
                 {
                     title: "Paires & Associations",
                     generator: () => {
@@ -915,7 +883,6 @@
                         };
                     }
                 },
-                // Level 6: Devinettes sur la nature
                 {
                     title: "Devinettes Malignes",
                     generator: () => {
@@ -935,7 +902,6 @@
                         };
                     }
                 },
-                // Level 7: Métiers & Outils
                 {
                     title: "Les Métiers",
                     generator: () => {
@@ -955,7 +921,6 @@
                         };
                     }
                 },
-                // Level 8: Heures & Moment de la journée
                 {
                     title: "Moments de la Journée",
                     generator: () => {
@@ -974,7 +939,6 @@
                         };
                     }
                 },
-                // Level 9: Saisons
                 {
                     title: "Les 4 Saisons",
                     generator: () => {
@@ -993,7 +957,6 @@
                         };
                     }
                 },
-                // Level 10: Champion de Logique
                 {
                     title: "Grand Défi Logique",
                     generator: () => {
@@ -1049,8 +1012,6 @@
 
             levels.forEach((lvl, idx) => {
                 const reward = rewards.find(r => r.category === cat && r.level === idx);
-                
-                // Unlocked if cheat code OR unlocked in profile OR level 0
                 const isUnlocked = isCheatProfile() || idx === 0 || profile.unlockedRewards.includes(reward.id) || (idx > 0 && profile.unlockedRewards.includes(`${cat}_${idx-1}`));
 
                 const btn = document.createElement('button');
@@ -1089,34 +1050,28 @@
                 return;
             }
 
-            // Reset hint display & wrong attempt counter
             wrongAttempts = 0;
             const hintBox = document.getElementById('hintBox');
             if (hintBox) hintBox.classList.add('hidden');
 
-            // Update Progress Bar
             const percent = (currentQuestionIndex / totalQuestionsPerLevel) * 100;
             document.getElementById('progressBar').style.width = `${percent}%`;
             document.getElementById('progressText').innerText = `${currentQuestionIndex}/${totalQuestionsPerLevel}`;
 
-            // Generate question
             const levelConfig = gameData[currentCategory][currentLevelIndex];
             currentQuestionObj = levelConfig.generator();
 
             document.getElementById('questionText').innerText = currentQuestionObj.question;
             document.getElementById('questionDisplay').innerHTML = currentQuestionObj.display;
 
-            // Show audio button if speech text available
             const speakBtn = document.getElementById('speakQuestionBtn');
             if (currentCategory === 'english' || currentQuestionObj.speechText) {
                 speakBtn.classList.remove('hidden');
-                // Automatically speak word in English after short delay
                 setTimeout(() => speakCurrentText(), 400);
             } else {
                 speakBtn.classList.add('hidden');
             }
 
-            // Generate option buttons
             const optionsGrid = document.getElementById('optionsGrid');
             optionsGrid.innerHTML = '';
 
@@ -1124,7 +1079,6 @@
                 const container = document.createElement('div');
                 
                 if (currentCategory === 'english') {
-                    // Structure : [ 🔊 ] [ Mot ]
                     container.className = "flex items-center gap-2 w-full";
                     container.innerHTML = `
                         <button type="button" class="audio-btn bg-indigo-500 hover:bg-indigo-600 text-white font-bold p-3 sm:p-5 rounded-2xl btn-3d transition-all flex items-center justify-center text-xl sm:text-2xl shadow min-w-[55px] sm:min-w-[65px] h-full" title="Écouter le mot">
@@ -1138,13 +1092,11 @@
                     const audioBtn = container.querySelector('.audio-btn');
                     const answerBtn = container.querySelector('.answer-btn');
 
-                    // Écouter le mot sans valider la réponse
                     audioBtn.onclick = (e) => {
                         e.stopPropagation();
                         speakEnglishText(opt);
                     };
 
-                    // Valider la réponse
                     answerBtn.onclick = () => {
                         speakEnglishText(opt);
                         checkAnswer(opt, answerBtn);
@@ -1185,7 +1137,6 @@
                 playSound('wrong');
 
                 wrongAttempts++;
-                // Show hint when wrong answer is selected
                 if (currentQuestionObj && currentQuestionObj.hint) {
                     const hintBox = document.getElementById('hintBox');
                     const hintText = document.getElementById('hintText');
@@ -1238,7 +1189,6 @@
             }
         }
 
-        // Confetti Generator
         function triggerConfetti() {
             const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
             for (let i = 0; i < 40; i++) {
@@ -1253,7 +1203,6 @@
             }
         }
 
-        // --- PROFILES MODAL LOGIC ---
         function openProfileModal() {
             renderProfilesList();
             document.getElementById('profileModal').classList.remove('hidden');
@@ -1330,7 +1279,6 @@
             updateProfileUI();
         }
 
-        // --- REWARDS MODAL LOGIC ---
         function openRewardsModal() {
             const grid = document.getElementById('rewardsGrid');
             grid.innerHTML = '';
@@ -1361,8 +1309,8 @@
             document.getElementById('rewardsModal').classList.add('hidden');
         }
 
-        // Initial setup
         updateProfileUI();
     </script>
 </body>
 </html>
+```
