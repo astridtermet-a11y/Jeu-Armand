@@ -215,7 +215,6 @@
 
                 <!-- Bottom Row: Car Progress Track on its own line -->
                 <div id="carTrackContainer" class="w-full flex items-center gap-3 pt-1">
-                    <span class="text-xl">🏎️</span>
                     <div class="relative w-full bg-gray-200 rounded-full h-6 border-2 border-indigo-200 px-1 flex items-center overflow-visible">
                         <!-- Progress fill track -->
                         <div id="progressBar" class="bg-gradient-to-r from-indigo-400 to-purple-500 h-3 rounded-full transition-all duration-500" style="width: 0%;"></div>
@@ -455,6 +454,8 @@
         function speakCurrentText() {
             if (currentQuestionObj && currentQuestionObj.speechText) {
                 speakEnglishText(currentQuestionObj.speechText);
+            } else if (currentQuestionObj && currentQuestionObj.question) {
+                speakEnglishText(currentQuestionObj.question);
             }
         }
 
@@ -1221,9 +1222,10 @@
             document.getElementById('questionDisplay').innerHTML = currentQuestionObj.display;
 
             const speakBtn = document.getElementById('speakQuestionBtn');
-            if (currentCategory === 'english' || currentQuestionObj.speechText) {
+            // Afficher le bouton d'écoute pour la question dans tous les cas ou si un texte/question est présent
+            if (currentQuestionObj) {
                 speakBtn.classList.remove('hidden');
-                setTimeout(() => speakCurrentText(), 400);
+                speakBtn.title = "Écouter la question";
             } else {
                 speakBtn.classList.add('hidden');
             }
