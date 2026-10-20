@@ -104,9 +104,13 @@
         </h1>
 
         <div class="flex items-center gap-2">
+            <button onclick="openRecordsModal()" class="bg-amber-500 hover:bg-amber-400 text-white px-3 py-2 rounded-2xl font-bold flex items-center gap-2 btn-3d text-xs sm:text-sm">
+                <i class="fas fa-medal text-lg text-yellow-200"></i>
+                <span>Records</span>
+            </button>
             <button onclick="openRewardsModal()" class="bg-pink-500 hover:bg-pink-400 text-white px-3 py-2 rounded-2xl font-bold flex items-center gap-2 btn-3d text-xs sm:text-sm">
                 <i class="fas fa-trophy text-lg text-yellow-300"></i>
-                <span>Mes Trésors</span>
+                <span>Trésors</span>
             </button>
         </div>
     </header>
@@ -118,7 +122,7 @@
         <div id="categoryMenu" class="w-full text-center space-y-6 pop-in">
             <div class="space-y-2">
                 <h2 class="text-2xl md:text-3xl font-bold text-indigo-800">Choisis une matière ! 🚀</h2>
-                <p class="text-gray-600 text-base md:text-lg">Gagne des étoiles et débloque de super cadeaux !</p>
+                <p class="text-gray-600 text-base md:text-lg">Gagne des étoiles et bat tes propres records !</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
@@ -127,7 +131,7 @@
                     <div class="text-6xl bg-white/20 p-4 rounded-full">🔢</div>
                     <div>
                         <h3 class="text-2xl font-bold mb-1">Mathématiques</h3>
-                        <p class="text-blue-100 text-sm">Comptage, additions, suites & comparaisons</p>
+                        <p class="text-blue-100 text-sm">Comptage, additions, suites & soustractions</p>
                     </div>
                     <span class="bg-white/30 text-white px-4 py-1 rounded-full text-sm font-semibold">10 Niveaux</span>
                 </button>
@@ -207,9 +211,15 @@
                         <span id="chronoTimerText" class="text-xl">60s</span>
                     </div>
 
-                    <!-- Question Score / Counter -->
-                    <div id="questionScoreBox" class="flex items-center gap-1.5 bg-indigo-100 px-3 py-1.5 rounded-2xl font-bold text-indigo-800 text-sm sm:text-base">
-                        <span id="progressText">0/5</span>
+                    <!-- Question Score / Counter & Streak indicator -->
+                    <div class="flex items-center gap-2">
+                        <div id="streakBox" class="flex items-center gap-1 bg-orange-100 text-orange-700 border border-orange-300 px-3 py-1 rounded-2xl font-bold text-xs sm:text-sm">
+                            <span>🔥</span>
+                            <span id="currentStreakText">0</span>
+                        </div>
+                        <div id="questionScoreBox" class="flex items-center gap-1.5 bg-indigo-100 px-3 py-1.5 rounded-2xl font-bold text-indigo-800 text-sm sm:text-base">
+                            <span id="progressText">0/5</span>
+                        </div>
                     </div>
                 </div>
 
@@ -234,9 +244,6 @@
                     <h3 id="questionText" class="text-2xl md:text-3xl font-bold text-gray-800">
                         Combien y a-t-il d'étoiles ?
                     </h3>
-                    <button id="speakQuestionBtn" onclick="speakCurrentText()" class="hidden bg-indigo-500 hover:bg-indigo-600 text-white p-3 rounded-full btn-3d shadow" title="Écouter en anglais">
-                        <i class="fas fa-volume-up text-xl"></i>
-                    </button>
                 </div>
                 
                 <div id="questionDisplay" class="flex flex-wrap justify-center items-center gap-3 text-4xl sm:text-5xl my-2">
@@ -261,6 +268,11 @@
             <div id="winIcon" class="text-7xl star-shine">🏆</div>
             <h2 id="winTitle" class="text-3xl md:text-4xl font-bold text-green-600">BRAVO ! NIVEAU RÉUSSI !</h2>
             <p id="winSubtitle" class="text-xl text-gray-700">Tu as gagné une super récompense !</p>
+
+            <!-- Record Alert Banner -->
+            <div id="recordAlert" class="hidden bg-gradient-to-r from-amber-400 to-yellow-500 text-white font-bold px-4 py-2 rounded-2xl shadow-md text-lg pop-in border-2 border-white max-w-sm mx-auto">
+                🎉 NOUVEAU RECORD PERSONNE ENREGISTRÉ ! 🎉
+            </div>
 
             <div id="rewardBox" class="bg-yellow-100 border-4 border-yellow-400 rounded-3xl p-6 max-w-sm mx-auto flex flex-col items-center gap-3 card-shadow">
                 <div id="rewardIcon" class="text-7xl animate-bounce">🧸</div>
@@ -301,6 +313,59 @@
         </div>
     </div>
 
+    <!-- RECORDS MODAL -->
+    <div id="recordsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto card-shadow relative pop-in">
+            <button onclick="closeRecordsModal()" class="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 rounded-full w-10 h-10 flex items-center justify-center font-bold text-gray-700 text-xl">
+                ✕
+            </button>
+            
+            <h2 class="text-3xl font-bold text-indigo-800 text-center mb-1">🏅 Mes Super Records</h2>
+            <p class="text-center text-gray-600 mb-6 text-sm sm:text-base">Découvre tes exploits et essaie de les battre !</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Record 1: Best Chrono -->
+                <div class="bg-gradient-to-br from-red-50 to-pink-100 border-2 border-pink-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                    <div class="text-4xl mb-1">⚡</div>
+                    <span class="text-xs font-bold text-red-600 uppercase tracking-wide">Record Chrono (1 min)</span>
+                    <span id="recordChronoVal" class="text-3xl font-black text-pink-900 my-1">0</span>
+                    <span class="text-xs text-gray-500">questions réussies</span>
+                </div>
+
+                <!-- Record 2: Max Streak -->
+                <div class="bg-gradient-to-br from-orange-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                    <div class="text-4xl mb-1">🔥</div>
+                    <span class="text-xs font-bold text-orange-600 uppercase tracking-wide">Plus longue série</span>
+                    <span id="recordStreakVal" class="text-3xl font-black text-amber-900 my-1">0</span>
+                    <span class="text-xs text-gray-500">bonnes réponses d'affilée</span>
+                </div>
+
+                <!-- Record 3: Total Questions -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-indigo-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                    <div class="text-4xl mb-1">🎯</div>
+                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">Total Réponses Justes</span>
+                    <span id="recordTotalCorrectVal" class="text-3xl font-black text-indigo-900 my-1">0</span>
+                    <span class="text-xs text-gray-500">questions réussies au total</span>
+                </div>
+
+                <!-- Record 4: Completed Levels -->
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-100 border-2 border-teal-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                    <div class="text-4xl mb-1">👑</div>
+                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wide">Niveaux Réussis</span>
+                    <span id="recordLevelsVal" class="text-3xl font-black text-teal-900 my-1">0</span>
+                    <span class="text-xs text-gray-500">sur 30 niveaux disponibles</span>
+                </div>
+            </div>
+
+            <!-- Current Streak Banner -->
+            <div class="mt-6 bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 text-center">
+                <p class="text-sm text-purple-700 font-semibold">
+                    🔥 Série de bonnes réponses actuelle : <span id="recordCurrentStreakVal" class="font-bold text-xl text-purple-900">0</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- REWARDS MODAL -->
     <div id="rewardsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto card-shadow relative pop-in">
@@ -319,12 +384,24 @@
 
     <script>
         // --- PROFILES & USER STATE MANAGEMENT ---
-        let profiles = JSON.parse(localStorage.getItem('edu_profiles_v2') || '[]');
-        let activeProfileName = localStorage.getItem('edu_active_profile_v2') || 'Astrid';
+        let profiles = JSON.parse(localStorage.getItem('edu_profiles_v3') || '[]');
+        let activeProfileName = localStorage.getItem('edu_active_profile_v3') || 'Astrid';
+
+        function initProfileDefaults(p) {
+            p.stars = p.stars || 0;
+            p.unlockedRewards = p.unlockedRewards || [];
+            p.maxChronoScore = p.maxChronoScore || 0;
+            p.maxStreak = p.maxStreak || 0;
+            p.currentStreak = p.currentStreak || 0;
+            p.totalCorrectQuestions = p.totalCorrectQuestions || 0;
+            return p;
+        }
 
         if (profiles.length === 0) {
-            profiles = [{ name: 'Astrid', stars: 0, unlockedRewards: [] }];
+            profiles = [initProfileDefaults({ name: 'Astrid', stars: 0, unlockedRewards: [] })];
             saveProfiles();
+        } else {
+            profiles = profiles.map(p => initProfileDefaults(p));
         }
 
         function getActiveProfile() {
@@ -333,12 +410,12 @@
                 p = profiles[0];
                 activeProfileName = p.name;
             }
-            return p;
+            return initProfileDefaults(p);
         }
 
         function saveProfiles() {
-            localStorage.setItem('edu_profiles_v2', JSON.stringify(profiles));
-            localStorage.setItem('edu_active_profile_v2', activeProfileName);
+            localStorage.setItem('edu_profiles_v3', JSON.stringify(profiles));
+            localStorage.setItem('edu_active_profile_v3', activeProfileName);
         }
 
         function isCheatProfile() {
@@ -353,7 +430,8 @@
         const totalQuestionsPerLevel = 5;
         let currentQuestionObj = null;
         let wrongAttempts = 0;
-        let usedQuestions = []; // Historique des questions posées pour éviter les doublons
+        let usedQuestions = [];
+        let isNewRecordSet = false;
 
         // Chrono Mode Specific Variables
         let chronoTimeLeft = 60;
@@ -404,7 +482,7 @@
             } catch (e) { console.log('Audio error:', e); }
         }
 
-        // --- SPEECH SYNTHESIS ---
+        // --- SPEECH SYNTHESIS (Uniquement pour l'Anglais) ---
         let availableVoices = [];
 
         function loadVoices() {
@@ -442,20 +520,12 @@
                     availableVoices = window.speechSynthesis.getVoices();
                 }
 
-                const englishVoice = availableVoices.find(v => v.lang.startsWith('en') || v.lang.includes('US') || v.lang.includes('GB'));
-                if (englishVoice) {
-                    utterance.voice = englishVoice;
+                const matchedVoice = availableVoices.find(v => v.lang.startsWith('en'));
+                if (matchedVoice) {
+                    utterance.voice = matchedVoice;
                 }
 
                 window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        function speakCurrentText() {
-            if (currentQuestionObj && currentQuestionObj.speechText) {
-                speakEnglishText(currentQuestionObj.speechText);
-            } else if (currentQuestionObj && currentQuestionObj.question) {
-                speakEnglishText(currentQuestionObj.question);
             }
         }
 
@@ -563,7 +633,7 @@
                         while(a === b) b = Math.floor(Math.random() * 9) + 1;
                         const max = Math.max(a, b);
                         return {
-                            question: "Quel est le plus GRAND nombre ?",
+                            question: `Quel est le plus grand nombre entre ${a} et ${b} ?`,
                             display: `<span class="text-blue-600 font-bold">${a}</span> ou <span class="text-pink-600 font-bold">${b}</span> ?`,
                             correct: max.toString(),
                             hint: `Lequel de ces deux nombres représente le plus de bonbons ?`,
@@ -605,7 +675,7 @@
                         const a = Math.floor(Math.random() * 5) + 1;
                         const ans = a + a;
                         return {
-                            question: `Combien fait le double de ${a} (${a} + ${a}) ?`,
+                            question: `Combien fait le double de ${a} ?`,
                             display: `${a} ➕ ${a} = ❓`,
                             correct: ans.toString(),
                             hint: `Imagine ${a} doigts sur ta main gauche et ${a} doigts sur ta main droite !`,
@@ -679,7 +749,7 @@
                         ];
                         const t = items[Math.floor(Math.random() * items.length)];
                         return {
-                            question: `Traduis la couleur "${t.fr}" :`,
+                            question: `Traduis la couleur "${t.fr}" en anglais :`,
                             display: `<div class="w-20 h-20 ${t.color} rounded-2xl shadow-inner border-4 border-white"></div>`,
                             correct: t.word,
                             speechText: t.word,
@@ -704,7 +774,7 @@
                             display: t.display,
                             correct: t.word,
                             speechText: t.word,
-                            hint: `Compte en anglais : One (1), Two (2), Three (3), Four (4), Five (5) !`,
+                            hint: `Compte en anglais : One, Two, Three, Four, Five !`,
                             options: shuffleArray([t.word, "Six", "Seven", "Zero"])
                         };
                     }
@@ -907,7 +977,7 @@
                         ];
                         const t = sets[Math.floor(Math.random() * sets.length)];
                         return {
-                            question: "Clique sur l'INTRUS (celui qui ne va pas avec les autres) :",
+                            question: "Clique sur l'intrus :",
                             display: shuffleArray([...t.items, t.intrus]).join(' '),
                             correct: t.intrus,
                             hint: t.hint,
@@ -920,7 +990,7 @@
                     generator: () => {
                         const isBig = Math.random() > 0.5;
                         return {
-                            question: isBig ? "Clique sur le PLUS GRAND animal !" : "Clique sur le PLUS PETIT animal !",
+                            question: isBig ? "Clique sur le plus grand animal !" : "Clique sur le plus petit animal !",
                             display: "🐘 vs 🐭",
                             correct: isBig ? "Elephant 🐘" : "Souris 🐭",
                             hint: isBig ? "L'éléphant est énorme !" : "La souris est toute petite !",
@@ -932,10 +1002,10 @@
                     title: "Paires & Associations",
                     generator: () => {
                         const pairs = [
-                            { q: "Où vit le poisson 🐟 ?", correct: "L'eau 🌊", wrong: "L'arbre 🌳", hint: "Le poisson a besoin de nager pour vivre !" },
-                            { q: "Que mange le lapin 🐰 ?", correct: "La carotte 🥕", wrong: "Le fromage 🧀", hint: "C'est un légume orange très croquant !" },
-                            { q: "Où dort l'oiseau 🐦 ?", correct: "Le nid 🪹", wrong: "La niche 🏠", hint: "Il le fabrique avec des petites branches dans l'arbre !" },
-                            { q: "Où brille le soleil ☀️ ?", correct: "Le ciel ☁️", wrong: "La mer 🌊", hint: "Regarde tout là-haut au-dessus de nous !" }
+                            { q: "Où vit le poisson ?", correct: "L'eau 🌊", wrong: "L'arbre 🌳", hint: "Le poisson a besoin de nager pour vivre !" },
+                            { q: "Que mange le lapin ?", correct: "La carotte 🥕", wrong: "Le fromage 🧀", hint: "C'est un légume orange très croquant !" },
+                            { q: "Où dort l'oiseau ?", correct: "Le nid 🪹", wrong: "La niche 🏠", hint: "Il le fabrique avec des petites branches dans l'arbre !" },
+                            { q: "Où brille le soleil ?", correct: "Le ciel ☁️", wrong: "La mer 🌊", hint: "Regarde tout là-haut au-dessus de nous !" }
                         ];
                         const t = pairs[Math.floor(Math.random() * pairs.length)];
                         return {
@@ -970,10 +1040,10 @@
                     title: "Les Métiers",
                     generator: () => {
                         const items = [
-                            { q: "Qui éteint les incendies 🚒 ?", correct: "Le Pompier 🧑‍🚒", hint: "Il conduit le grand camion rouge !" },
-                            { q: "Qui soigne les malades 🩺 ?", correct: "Le Médecin 🧑‍⚕️", hint: "Il travaille à l'hôpital ou dans son cabinet !" },
-                            { q: "Qui fabrique le bon pain 🥖 ?", correct: "Le Boulanger 🥖", hint: "On va chez lui acheter des croissants !" },
-                            { q: "Qui vole dans l'espace 🚀 ?", correct: "L'Astronaute 🧑‍🚀", hint: "Il monte dans une fusée spatiale !" }
+                            { q: "Qui éteint les incendies ?", correct: "Le Pompier 🧑‍🚒", hint: "Il conduit le grand camion rouge !" },
+                            { q: "Qui soigne les malades ?", correct: "Le Médecin 🧑‍⚕️", hint: "Il travaille à l'hôpital ou dans son cabinet !" },
+                            { q: "Qui fabrique le bon pain ?", correct: "Le Boulanger 🥖", hint: "On va chez lui acheter des croissants !" },
+                            { q: "Qui vole dans l'espace ?", correct: "L'Astronaute 🧑‍🚀", hint: "Il monte dans une fusée spatiale !" }
                         ];
                         const t = items[Math.floor(Math.random() * items.length)];
                         return {
@@ -989,9 +1059,9 @@
                     title: "Moments de la Journée",
                     generator: () => {
                         const items = [
-                            { q: "Quand prends-tu le petit-déjeuner 🥣 ?", correct: "Le Matin 🌅", hint: "C'est quand tu viens juste de te réveiller !" },
-                            { q: "Quand regarde-t-on les étoiles ⭐ ?", correct: "La Nuit 🌙", hint: "C'est quand il fait tout noir dehors !" },
-                            { q: "Quand dort-on dans son lit 🛏️ ?", correct: "La Nuit 🌙", hint: "C'est l'heure d'aller se coucher !" }
+                            { q: "Quand prends-tu le petit-déjeuner ?", correct: "Le Matin 🌅", hint: "C'est quand tu viens juste de te réveiller !" },
+                            { q: "Quand regarde-t-on les étoiles ?", correct: "La Nuit 🌙", hint: "C'est quand il fait tout noir dehors !" },
+                            { q: "Quand dort-on dans son lit ?", correct: "La Nuit 🌙", hint: "C'est l'heure d'aller se coucher !" }
                         ];
                         const t = items[Math.floor(Math.random() * items.length)];
                         return {
@@ -1007,9 +1077,9 @@
                     title: "Les 4 Saisons",
                     generator: () => {
                         const items = [
-                            { q: "Quelle saison fait-il quand il neige ☃️ ?", correct: "L'Hiver ❄️", hint: "On met un grand manteau, un bonnet et des gants !" },
-                            { q: "Quelle saison fait-il très chaud pour se baigner 🏖️ ?", correct: "L'Été ☀️", hint: "C'est le moment des grandes vacances à la plage !" },
-                            { q: "Quand les feuilles tombent des arbres 🍂 ?", correct: "L'Automne 🍁", hint: "Les feuilles deviennent rouges et jaunes !" }
+                            { q: "Quelle saison fait-il quand il neige ?", correct: "L'Hiver ❄️", hint: "On met un grand manteau, un bonnet et des gants !" },
+                            { q: "Quelle saison fait-il très chaud pour se baigner ?", correct: "L'Été ☀️", hint: "C'est le moment des grandes vacances à la plage !" },
+                            { q: "Quand les feuilles tombent des arbres ?", correct: "L'Automne 🍁", hint: "Les feuilles deviennent rouges et jaunes !" }
                         ];
                         const t = items[Math.floor(Math.random() * items.length)];
                         return {
@@ -1025,9 +1095,9 @@
                     title: "Grand Défi Logique",
                     generator: () => {
                         const items = [
-                            { q: "Combien de pattes a un chien 🐶 ?", correct: "4 pattes", hint: "Deux devant et deux derrière !" },
-                            { q: "Combien de roues a un vélo 🚲 ?", correct: "2 roues", hint: "Une roue à l'avant et une roue à l'arrière !" },
-                            { q: "De quelle couleur est l'herbe 🌿 ?", correct: "Verte 💚", hint: "Comme la couleur des arbres et des feuilles !" }
+                            { q: "Combien de pattes a un chien ?", correct: "4 pattes", hint: "Deux devant et deux derrière !" },
+                            { q: "Combien de roues a un vélo ?", correct: "2 roues", hint: "Une roue à l'avant et une roue à l'arrière !" },
+                            { q: "De quelle couleur est l'herbe ?", correct: "Verte 💚", hint: "Comme la couleur des arbres et des feuilles !" }
                         ];
                         const t = items[Math.floor(Math.random() * items.length)];
                         return {
@@ -1051,6 +1121,7 @@
             const profile = getActiveProfile();
             document.getElementById('currentProfileName').innerText = profile.name + (isCheatProfile() ? " ⚡" : "");
             document.getElementById('starCount').innerText = isCheatProfile() ? '999' : profile.stars;
+            document.getElementById('currentStreakText').innerText = profile.currentStreak || 0;
         }
 
         function stopChronoTimer() {
@@ -1121,7 +1192,8 @@
             currentLevelIndex = levelIdx;
             currentQuestionIndex = 0;
             chronoScore = 0;
-            usedQuestions = []; // Re-initialisation du filtre anti-doublons
+            usedQuestions = [];
+            isNewRecordSet = false;
 
             document.getElementById('levelMenu').classList.add('hidden');
             document.getElementById('gameArea').classList.remove('hidden');
@@ -1199,7 +1271,6 @@
 
             const levelConfig = gameData[currentCategory][currentLevelIndex];
             
-            // Génération d'une question unique (avec sécurité boucle max 30 essais)
             let uniqueQ = null;
             let attempts = 0;
             while (attempts < 30) {
@@ -1213,22 +1284,13 @@
                 attempts++;
             }
             if (!uniqueQ) {
-                uniqueQ = levelConfig.generator(); // Fallback si combinaison épuisée
+                uniqueQ = levelConfig.generator();
             }
 
             currentQuestionObj = uniqueQ;
 
-            document.getElementById('questionText').innerText = currentQuestionObj.question;
+            document.getElementById('questionText').innerHTML = currentQuestionObj.question;
             document.getElementById('questionDisplay').innerHTML = currentQuestionObj.display;
-
-            const speakBtn = document.getElementById('speakQuestionBtn');
-            // Afficher le bouton d'écoute pour la question dans tous les cas ou si un texte/question est présent
-            if (currentQuestionObj) {
-                speakBtn.classList.remove('hidden');
-                speakBtn.title = "Écouter la question";
-            } else {
-                speakBtn.classList.add('hidden');
-            }
 
             const optionsGrid = document.getElementById('optionsGrid');
             optionsGrid.innerHTML = '';
@@ -1239,7 +1301,7 @@
                 if (currentCategory === 'english') {
                     container.className = "flex items-center gap-2 w-full";
                     container.innerHTML = `
-                        <button type="button" class="audio-btn bg-indigo-500 hover:bg-indigo-600 text-white font-bold p-3 sm:p-5 rounded-2xl btn-3d transition-all flex items-center justify-center text-xl sm:text-2xl shadow min-w-[55px] sm:min-w-[65px] h-full" title="Écouter le mot">
+                        <button type="button" class="audio-btn bg-indigo-500 hover:bg-indigo-600 text-white font-bold p-3 sm:p-5 rounded-2xl btn-3d transition-all flex items-center justify-center text-xl sm:text-2xl shadow min-w-[55px] sm:min-w-[65px] h-full" title="Écouter la prononciation anglaise">
                             <i class="fas fa-volume-up pointer-events-none"></i>
                         </button>
                         <button type="button" class="answer-btn bg-white hover:bg-indigo-50 border-4 border-indigo-200 hover:border-indigo-400 text-indigo-900 font-bold text-xl sm:text-2xl p-3 sm:p-5 rounded-2xl btn-3d transition-all flex-1 text-center min-h-[70px]">
@@ -1277,13 +1339,22 @@
             const buttons = document.querySelectorAll('#optionsGrid .answer-btn, #optionsGrid .audio-btn');
             buttons.forEach(b => b.disabled = true);
 
+            const profile = getActiveProfile();
+
             if (isCorrect) {
                 btnElement.classList.remove('bg-white', 'border-indigo-200');
                 btnElement.classList.add('bg-green-400', 'border-green-600', 'text-white', 'scale-105');
                 playSound('correct');
                 
-                const profile = getActiveProfile();
                 profile.stars += 1;
+                profile.totalCorrectQuestions += 1;
+                profile.currentStreak += 1;
+
+                if (profile.currentStreak > profile.maxStreak) {
+                    profile.maxStreak = profile.currentStreak;
+                    isNewRecordSet = true;
+                }
+
                 saveProfiles();
                 updateProfileUI();
 
@@ -1297,6 +1368,10 @@
                 btnElement.classList.remove('bg-white', 'border-indigo-200');
                 btnElement.classList.add('bg-red-400', 'border-red-600', 'text-white');
                 playSound('wrong');
+
+                profile.currentStreak = 0;
+                saveProfiles();
+                updateProfileUI();
 
                 wrongAttempts++;
                 if (currentQuestionObj && currentQuestionObj.hint && currentGameMode === 'normal') {
@@ -1326,12 +1401,26 @@
             
             if (reward && !profile.unlockedRewards.includes(reward.id)) {
                 profile.unlockedRewards.push(reward.id);
-                saveProfiles();
             }
+
+            if (currentGameMode === 'chrono' && chronoScore > profile.maxChronoScore) {
+                profile.maxChronoScore = chronoScore;
+                isNewRecordSet = true;
+            }
+
+            saveProfiles();
+            updateProfileUI();
 
             const winTitle = document.getElementById('winTitle');
             const winSubtitle = document.getElementById('winSubtitle');
             const rewardDesc = document.getElementById('rewardDesc');
+            const recordAlert = document.getElementById('recordAlert');
+
+            if (isNewRecordSet) {
+                recordAlert.classList.remove('hidden');
+            } else {
+                recordAlert.classList.add('hidden');
+            }
 
             if (currentGameMode === 'chrono') {
                 document.getElementById('winIcon').innerText = '⚡';
@@ -1391,6 +1480,22 @@
             document.getElementById('profileModal').classList.add('hidden');
         }
 
+        function openRecordsModal() {
+            const profile = getActiveProfile();
+            
+            document.getElementById('recordChronoVal').innerText = isCheatProfile() ? '99' : (profile.maxChronoScore || 0);
+            document.getElementById('recordStreakVal').innerText = isCheatProfile() ? '999' : (profile.maxStreak || 0);
+            document.getElementById('recordTotalCorrectVal').innerText = isCheatProfile() ? '9999' : (profile.totalCorrectQuestions || 0);
+            document.getElementById('recordLevelsVal').innerText = isCheatProfile() ? '30' : (profile.unlockedRewards ? profile.unlockedRewards.length : 0);
+            document.getElementById('recordCurrentStreakVal').innerText = isCheatProfile() ? '999' : (profile.currentStreak || 0);
+
+            document.getElementById('recordsModal').classList.remove('hidden');
+        }
+
+        function closeRecordsModal() {
+            document.getElementById('recordsModal').classList.add('hidden');
+        }
+
         function renderProfilesList() {
             const container = document.getElementById('profilesList');
             container.innerHTML = '';
@@ -1437,7 +1542,7 @@
             if (!name) return;
 
             if (!profiles.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-                profiles.push({ name: name, stars: 0, unlockedRewards: [] });
+                profiles.push(initProfileDefaults({ name: name, stars: 0, unlockedRewards: [] }));
             }
             activeProfileName = name;
             saveProfiles();
